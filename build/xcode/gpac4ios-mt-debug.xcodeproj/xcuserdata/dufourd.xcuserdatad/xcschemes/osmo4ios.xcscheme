@@ -7,6 +7,20 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "71A19B1912796B5600ACFF58"
+               BuildableName = "osmo4ios.app"
+               BlueprintName = "osmo4ios"
+               ReferencedContainer = "container:gpac4ios.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
@@ -17,7 +31,7 @@
                BlueprintIdentifier = "71A19B1912796B5600ACFF58"
                BuildableName = "osmo4ios.app"
                BlueprintName = "osmo4ios"
-               ReferencedContainer = "container:gpac4ios.xcodeproj">
+               ReferencedContainer = "container:gpac4ios-mt-debug.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
