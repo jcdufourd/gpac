@@ -25,6 +25,29 @@
 		28F2240417D6367000E9D2BE /* ffmpeg_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F2240317D6367000E9D2BE /* ffmpeg_decode.c */; };
 		28F2240617D6369700E9D2BE /* ffmpeg_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F2240517D6369700E9D2BE /* ffmpeg_demux.c */; };
 		28F2240A17D636DA00E9D2BE /* ffmpeg_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 28F2240917D636DA00E9D2BE /* ffmpeg_load.c */; };
+		3174CA591ACC22320044E436 /* osmo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA4F1ACC22320044E436 /* osmo1.png */; };
+		3174CA661ACC22C50044E436 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA651ACC22C50044E436 /* Images.xcassets */; };
+		3174CA6F1ACC25860044E436 /* osmo29.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA671ACC25860044E436 /* osmo29.png */; };
+		3174CA701ACC25860044E436 /* osmo40.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA681ACC25860044E436 /* osmo40.png */; };
+		3174CA711ACC25860044E436 /* osmo58.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA691ACC25860044E436 /* osmo58.png */; };
+		3174CA721ACC25860044E436 /* osmo76.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA6A1ACC25860044E436 /* osmo76.png */; };
+		3174CA731ACC25860044E436 /* osmo80.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA6B1ACC25860044E436 /* osmo80.png */; };
+		3174CA741ACC25860044E436 /* osmo120.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA6C1ACC25860044E436 /* osmo120.png */; };
+		3174CA751ACC25860044E436 /* osmo152.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA6D1ACC25860044E436 /* osmo152.png */; };
+		3174CA761ACC25860044E436 /* osmo180.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA6E1ACC25860044E436 /* osmo180.png */; };
+		3174CA7D1ACC2AFF0044E436 /* osmo640960.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA771ACC2AFF0044E436 /* osmo640960.png */; };
+		3174CA7E1ACC2AFF0044E436 /* osmo1024768.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA781ACC2AFF0044E436 /* osmo1024768.png */; };
+		3174CA7F1ACC2AFF0044E436 /* osmo6401136.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA791ACC2AFF0044E436 /* osmo6401136.png */; };
+		3174CA801ACC2AFF0044E436 /* osmo7681024.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA7A1ACC2AFF0044E436 /* osmo7681024.png */; };
+		3174CA811ACC2AFF0044E436 /* osmo15362048.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA7B1ACC2AFF0044E436 /* osmo15362048.png */; };
+		3174CA821ACC2AFF0044E436 /* osmo20481536.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA7C1ACC2AFF0044E436 /* osmo20481536.png */; };
+		3174CA881ACC2B100044E436 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA831ACC2B100044E436 /* Default-568h@2x.png */; };
+		3174CA891ACC2B100044E436 /* icon_ipad_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA841ACC2B100044E436 /* icon_ipad_retina.png */; };
+		3174CA8A1ACC2B100044E436 /* icon_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA851ACC2B100044E436 /* icon_ipad.png */; };
+		3174CA8B1ACC2B100044E436 /* icon_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA861ACC2B100044E436 /* icon_retina.png */; };
+		3174CA8C1ACC2B100044E436 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3174CA871ACC2B100044E436 /* icon.png */; };
+		31CC427D1ACC35400013020A /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CC427C1ACC35400013020A /* GameKit.framework */; };
+		31CC427F1ACC35440013020A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CC427E1ACC35440013020A /* StoreKit.framework */; };
 		7141FF301292CB9200FCB27D /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 7141FF2F1292CB9200FCB27D /* alloc.c */; };
 		7147426012B918C900DB5A59 /* cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 7147425F12B918C900DB5A59 /* cache.c */; };
 		71A19B2112796B6F00ACFF58 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 71A19B2012796B6F00ACFF58 /* main.c */; };
@@ -376,11 +399,6 @@
 		925FF2A51ABC53F30085B04C /* odf_parse_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 925FF2A31ABC53F30085B04C /* odf_parse_common.h */; };
 		925FF2A61ABC53F30085B04C /* smjs_api.h in Headers */ = {isa = PBXBuildFile; fileRef = 925FF2A41ABC53F30085B04C /* smjs_api.h */; };
 		925FF2A71ABC55030085B04C /* os_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 71CCF2361277045100339E12 /* os_file.c */; };
-		929A929C16EF8BC200B7C64F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 929A929616EF8BC200B7C64F /* Default-568h@2x.png */; };
-		929A929D16EF8BC200B7C64F /* icon_ipad_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 929A929716EF8BC200B7C64F /* icon_ipad_retina.png */; };
-		929A929E16EF8BC200B7C64F /* icon_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 929A929816EF8BC200B7C64F /* icon_ipad.png */; };
-		929A929F16EF8BC200B7C64F /* icon_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 929A929916EF8BC200B7C64F /* icon_retina.png */; };
-		929A92A016EF8BC200B7C64F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 929A929A16EF8BC200B7C64F /* icon.png */; };
 		92A3A03E16F0C10C004EE581 /* extract.c in Sources */ = {isa = PBXBuildFile; fileRef = 92A3A03D16F0C10C004EE581 /* extract.c */; };
 		92B039F716F2050100B2568F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 92B039F616F2050100B2568F /* libSDL2.a */; };
 		92B32CA41A08ABBF0065F44A /* webvtt_smjs.c in Sources */ = {isa = PBXBuildFile; fileRef = 92B32CA31A08ABBF0065F44A /* webvtt_smjs.c */; };
@@ -506,6 +524,29 @@
 		28F2240517D6369700E9D2BE /* ffmpeg_demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffmpeg_demux.c; path = ../../modules/ffmpeg_in/ffmpeg_demux.c; sourceTree = "<group>"; };
 		28F2240717D636C300E9D2BE /* ffmpeg_in.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ffmpeg_in.h; path = ../../modules/ffmpeg_in/ffmpeg_in.h; sourceTree = "<group>"; };
 		28F2240917D636DA00E9D2BE /* ffmpeg_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffmpeg_load.c; path = ../../modules/ffmpeg_in/ffmpeg_load.c; sourceTree = "<group>"; };
+		3174CA4F1ACC22320044E436 /* osmo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo1.png; path = ../../applications/osmo4_ios/Resources/osmo1.png; sourceTree = "<group>"; };
+		3174CA651ACC22C50044E436 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = osmo4ios/Images.xcassets; sourceTree = "<group>"; };
+		3174CA671ACC25860044E436 /* osmo29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo29.png; path = ../../applications/osmo4_ios/Resources/osmo29.png; sourceTree = "<group>"; };
+		3174CA681ACC25860044E436 /* osmo40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo40.png; path = ../../applications/osmo4_ios/Resources/osmo40.png; sourceTree = "<group>"; };
+		3174CA691ACC25860044E436 /* osmo58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo58.png; path = ../../applications/osmo4_ios/Resources/osmo58.png; sourceTree = "<group>"; };
+		3174CA6A1ACC25860044E436 /* osmo76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo76.png; path = ../../applications/osmo4_ios/Resources/osmo76.png; sourceTree = "<group>"; };
+		3174CA6B1ACC25860044E436 /* osmo80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo80.png; path = ../../applications/osmo4_ios/Resources/osmo80.png; sourceTree = "<group>"; };
+		3174CA6C1ACC25860044E436 /* osmo120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo120.png; path = ../../applications/osmo4_ios/Resources/osmo120.png; sourceTree = "<group>"; };
+		3174CA6D1ACC25860044E436 /* osmo152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo152.png; path = ../../applications/osmo4_ios/Resources/osmo152.png; sourceTree = "<group>"; };
+		3174CA6E1ACC25860044E436 /* osmo180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo180.png; path = ../../applications/osmo4_ios/Resources/osmo180.png; sourceTree = "<group>"; };
+		3174CA771ACC2AFF0044E436 /* osmo640960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo640960.png; path = ../../applications/osmo4_ios/Resources/osmo640960.png; sourceTree = "<group>"; };
+		3174CA781ACC2AFF0044E436 /* osmo1024768.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo1024768.png; path = ../../applications/osmo4_ios/Resources/osmo1024768.png; sourceTree = "<group>"; };
+		3174CA791ACC2AFF0044E436 /* osmo6401136.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo6401136.png; path = ../../applications/osmo4_ios/Resources/osmo6401136.png; sourceTree = "<group>"; };
+		3174CA7A1ACC2AFF0044E436 /* osmo7681024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo7681024.png; path = ../../applications/osmo4_ios/Resources/osmo7681024.png; sourceTree = "<group>"; };
+		3174CA7B1ACC2AFF0044E436 /* osmo15362048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo15362048.png; path = ../../applications/osmo4_ios/Resources/osmo15362048.png; sourceTree = "<group>"; };
+		3174CA7C1ACC2AFF0044E436 /* osmo20481536.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = osmo20481536.png; path = ../../applications/osmo4_ios/Resources/osmo20481536.png; sourceTree = "<group>"; };
+		3174CA831ACC2B100044E436 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../../applications/osmo4_ios/Resources/Default-568h@2x.png"; sourceTree = "<group>"; };
+		3174CA841ACC2B100044E436 /* icon_ipad_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_ipad_retina.png; path = ../../applications/osmo4_ios/Resources/icon_ipad_retina.png; sourceTree = "<group>"; };
+		3174CA851ACC2B100044E436 /* icon_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_ipad.png; path = ../../applications/osmo4_ios/Resources/icon_ipad.png; sourceTree = "<group>"; };
+		3174CA861ACC2B100044E436 /* icon_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_retina.png; path = ../../applications/osmo4_ios/Resources/icon_retina.png; sourceTree = "<group>"; };
+		3174CA871ACC2B100044E436 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../applications/osmo4_ios/Resources/icon.png; sourceTree = "<group>"; };
+		31CC427C1ACC35400013020A /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		31CC427E1ACC35440013020A /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		71179CBF1292EC1800A83216 /* mpd_in.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpd_in.c; path = ../../modules/mpd_in/mpd_in.c; sourceTree = "<group>"; };
 		7141FF2F1292CB9200FCB27D /* alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alloc.c; sourceTree = "<group>"; };
 		7147425F12B918C900DB5A59 /* cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cache.c; sourceTree = "<group>"; };
@@ -921,11 +962,6 @@
 		925730A31A0916DB0057FF04 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		925FF2A31ABC53F30085B04C /* odf_parse_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = odf_parse_common.h; sourceTree = "<group>"; };
 		925FF2A41ABC53F30085B04C /* smjs_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smjs_api.h; sourceTree = "<group>"; };
-		929A929616EF8BC200B7C64F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../../applications/osmo4_ios/Resources/Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
-		929A929716EF8BC200B7C64F /* icon_ipad_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_ipad_retina.png; path = ../../applications/osmo4_ios/Resources/icon_ipad_retina.png; sourceTree = SOURCE_ROOT; };
-		929A929816EF8BC200B7C64F /* icon_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_ipad.png; path = ../../applications/osmo4_ios/Resources/icon_ipad.png; sourceTree = SOURCE_ROOT; };
-		929A929916EF8BC200B7C64F /* icon_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_retina.png; path = ../../applications/osmo4_ios/Resources/icon_retina.png; sourceTree = SOURCE_ROOT; };
-		929A929A16EF8BC200B7C64F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../applications/osmo4_ios/Resources/icon.png; sourceTree = SOURCE_ROOT; };
 		92A3A03D16F0C10C004EE581 /* extract.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = extract.c; path = ../../applications/osmo4_ios/extract.c; sourceTree = SOURCE_ROOT; };
 		92B039F616F2050100B2568F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../extra_lib/lib/iOS/libSDL2.a; sourceTree = SOURCE_ROOT; };
 		92B32CA31A08ABBF0065F44A /* webvtt_smjs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = webvtt_smjs.c; sourceTree = "<group>"; };
@@ -1072,6 +1108,8 @@
 				0496F07B16DD1A18009D9D8D /* libmad.a in Frameworks */,
 				0496F07C16DD1A18009D9D8D /* libpng.a in Frameworks */,
 				71A19BB212797D1B00ACFF58 /* OpenGLES.framework in Frameworks */,
+				31CC427D1ACC35400013020A /* GameKit.framework in Frameworks */,
+				31CC427F1ACC35440013020A /* StoreKit.framework in Frameworks */,
 				71A19BC412797D9200ACFF58 /* libobjc.dylib in Frameworks */,
 				71A19BCD12797DBA00ACFF58 /* UIKit.framework in Frameworks */,
 				71A19C3D12797E4000ACFF58 /* Foundation.framework in Frameworks */,
@@ -1109,6 +1147,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				3174CA651ACC22C50044E436 /* Images.xcassets */,
 				92C7F1991AA8B48E00BA5B4C /* gui */,
 				71CCF1381277041D00339E12 /* libgpac */,
 				929A929516EF8A7500B7C64F /* modules */,
@@ -1122,6 +1161,8 @@
 		7184780712785F7B00917298 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				31CC427E1ACC35440013020A /* StoreKit.framework */,
+				31CC427C1ACC35400013020A /* GameKit.framework */,
 				2897039B1A13C4050063E9C0 /* libswresample.a */,
 				925730A31A0916DB0057FF04 /* libbz2.dylib */,
 				925730A11A0916D20057FF04 /* libiconv.dylib */,
@@ -1243,12 +1284,27 @@
 			isa = PBXGroup;
 			children = (
 				92B69DB01A091CFC004E74AA /* gui */,
-				929A929616EF8BC200B7C64F /* Default-568h@2x.png */,
-				929A929716EF8BC200B7C64F /* icon_ipad_retina.png */,
-				929A929816EF8BC200B7C64F /* icon_ipad.png */,
-				929A929916EF8BC200B7C64F /* icon_retina.png */,
-				929A929A16EF8BC200B7C64F /* icon.png */,
 				71EC88E01396273B004DCB6A /* osmo.icns */,
+				3174CA4F1ACC22320044E436 /* osmo1.png */,
+				3174CA831ACC2B100044E436 /* Default-568h@2x.png */,
+				3174CA841ACC2B100044E436 /* icon_ipad_retina.png */,
+				3174CA851ACC2B100044E436 /* icon_ipad.png */,
+				3174CA861ACC2B100044E436 /* icon_retina.png */,
+				3174CA871ACC2B100044E436 /* icon.png */,
+				3174CA671ACC25860044E436 /* osmo29.png */,
+				3174CA681ACC25860044E436 /* osmo40.png */,
+				3174CA771ACC2AFF0044E436 /* osmo640960.png */,
+				3174CA781ACC2AFF0044E436 /* osmo1024768.png */,
+				3174CA791ACC2AFF0044E436 /* osmo6401136.png */,
+				3174CA7A1ACC2AFF0044E436 /* osmo7681024.png */,
+				3174CA7B1ACC2AFF0044E436 /* osmo15362048.png */,
+				3174CA7C1ACC2AFF0044E436 /* osmo20481536.png */,
+				3174CA691ACC25860044E436 /* osmo58.png */,
+				3174CA6A1ACC25860044E436 /* osmo76.png */,
+				3174CA6B1ACC25860044E436 /* osmo80.png */,
+				3174CA6C1ACC25860044E436 /* osmo120.png */,
+				3174CA6D1ACC25860044E436 /* osmo152.png */,
+				3174CA6E1ACC25860044E436 /* osmo180.png */,
 				92A3A03D16F0C10C004EE581 /* extract.c */,
 				71A19B2012796B6F00ACFF58 /* main.c */,
 				71A19B1C12796B5700ACFF58 /* osmo4ios-Info.plist */,
@@ -2133,7 +2189,15 @@
 				LastUpgradeCheck = 0620;
 				TargetAttributes = {
 					71A19B1912796B5600ACFF58 = {
-						DevelopmentTeam = Q46G522WGV;
+						DevelopmentTeam = 4K2GX4HQ8D;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -2163,13 +2227,29 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3174CA751ACC25860044E436 /* osmo152.png in Resources */,
+				3174CA811ACC2AFF0044E436 /* osmo15362048.png in Resources */,
+				3174CA721ACC25860044E436 /* osmo76.png in Resources */,
 				92C7F19A1AA8B48E00BA5B4C /* gui in Resources */,
+				3174CA7D1ACC2AFF0044E436 /* osmo640960.png in Resources */,
+				3174CA8B1ACC2B100044E436 /* icon_retina.png in Resources */,
+				3174CA6F1ACC25860044E436 /* osmo29.png in Resources */,
+				3174CA741ACC25860044E436 /* osmo120.png in Resources */,
+				3174CA711ACC25860044E436 /* osmo58.png in Resources */,
+				3174CA661ACC22C50044E436 /* Images.xcassets in Resources */,
 				71EC88E11396273B004DCB6A /* osmo.icns in Resources */,
-				929A929C16EF8BC200B7C64F /* Default-568h@2x.png in Resources */,
-				929A929D16EF8BC200B7C64F /* icon_ipad_retina.png in Resources */,
-				929A929E16EF8BC200B7C64F /* icon_ipad.png in Resources */,
-				929A929F16EF8BC200B7C64F /* icon_retina.png in Resources */,
-				929A92A016EF8BC200B7C64F /* icon.png in Resources */,
+				3174CA731ACC25860044E436 /* osmo80.png in Resources */,
+				3174CA891ACC2B100044E436 /* icon_ipad_retina.png in Resources */,
+				3174CA8C1ACC2B100044E436 /* icon.png in Resources */,
+				3174CA7F1ACC2AFF0044E436 /* osmo6401136.png in Resources */,
+				3174CA881ACC2B100044E436 /* Default-568h@2x.png in Resources */,
+				3174CA8A1ACC2B100044E436 /* icon_ipad.png in Resources */,
+				3174CA821ACC2AFF0044E436 /* osmo20481536.png in Resources */,
+				3174CA761ACC25860044E436 /* osmo180.png in Resources */,
+				3174CA801ACC2AFF0044E436 /* osmo7681024.png in Resources */,
+				3174CA591ACC22320044E436 /* osmo1.png in Resources */,
+				3174CA7E1ACC2AFF0044E436 /* osmo1024768.png in Resources */,
+				3174CA701ACC25860044E436 /* osmo40.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2524,8 +2604,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: MOTIONTREE";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MOTIONTREE";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEPLOYMENT_LOCATION = YES;
@@ -2542,20 +2624,22 @@
 				);
 				INFOPLIST_FILE = "../../applications/osmo4_ios/osmo4ios-Info.plist";
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../extra_lib/lib/iOS\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = osmo4ios;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -2563,8 +2647,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: MOTIONTREE";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MOTIONTREE";
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -2577,20 +2663,21 @@
 				);
 				INFOPLIST_FILE = "../../applications/osmo4_ios/osmo4ios-Info.plist";
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../extra_lib/lib/iOS\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = osmo4ios;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2622,14 +2709,15 @@
 					../../extra_lib/include/freetype,
 					../../extra_lib/include,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LIBRARY_SEARCH_PATHS = ../../extra_lib/lib/iOS;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-fms-extensions",
 					"-D__IPHONEOS__",
 				);
 				PRODUCT_NAME = libgpac_static;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
@@ -2659,15 +2747,16 @@
 					../../extra_lib/include/freetype,
 					../../extra_lib/include,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LIBRARY_SEARCH_PATHS = ../../extra_lib/lib/iOS;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-fms-extensions",
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-D__IPHONEOS__",
 				);
 				PRODUCT_NAME = libgpac_static;
+				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 				ZERO_LINK = NO;
 			};
@@ -2677,8 +2766,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: MOTIONTREE";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MOTIONTREE";
 				DEPLOYMENT_LOCATION = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_FAST_OBJC_DISPATCH = NO;
@@ -2694,10 +2783,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2707,8 +2796,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: MOTIONTREE";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: MOTIONTREE";
 				DEPLOYMENT_LOCATION = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_FAST_OBJC_DISPATCH = NO;
@@ -2724,11 +2813,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
