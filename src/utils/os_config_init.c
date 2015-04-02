@@ -452,7 +452,7 @@ static GF_Config *create_default_config(char *file_path)
 #elif defined(__APPLE__)
 
 #ifdef GPAC_IPHONE
-	strcpy(szPath, "/System/Library/Fonts/Cache");
+	strcpy(szPath, "/System/Library/Fonts/AppFonts");
 #else
 	strcpy(szPath, "/Library/Fonts");
 #endif
