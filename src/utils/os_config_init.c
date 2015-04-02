@@ -52,13 +52,13 @@
 #else
 #define TEST_MODULE		"gm_dummy_in.dylib"
 #endif
-#define CFG_FILE_NAME	"GPAC.cfg"
+#define CFG_FILE_NAME	".gpacrc"
 
 #else
 #ifdef GPAC_CONFIG_LINUX
 #include <unistd.h>
 #endif
-#define CFG_FILE_NAME	"GPAC.cfg"
+#define CFG_FILE_NAME	".gpacrc"
 #define TEST_MODULE		"gm_dummy_in.so"
 #endif
 
@@ -89,10 +89,9 @@ static Bool check_file_exists(char *name, char *path, char *outPath)
 	}
 #endif
 	sprintf(szPath, "%s%c%s", path, GF_PATH_SEPARATOR, name);
-	//do not use gf_fopen here, we don't want to throw en error if failure
-	f = fopen(szPath, "rb");
+	f = gf_fopen(szPath, "rb");
 	if (!f) return GF_FALSE;
-	fclose(f);
+	gf_fclose(f);
 	if (outPath != path) strcpy(outPath, path);
 	return GF_TRUE;
 }
@@ -185,10 +184,9 @@ static Bool get_default_install_path(char *file_path, u32 path_type)
 
 	strcpy(szPath, file_path);
 	strcat(szPath, "\\gpaccfgtest.txt");
-	//do not use gf_fopen here, we don't want to through any error if failure
-	f = fopen(szPath, "wb");
+	f = gf_fopen(szPath, "wb");
 	if (f != NULL) {
-		fclose(f);
+		gf_fclose(f);
 		gf_delete_file(szPath);
 		return GF_TRUE;
 	}
@@ -203,11 +201,11 @@ static Bool get_default_install_path(char *file_path, u32 path_type)
 	_mkdir(file_path);
 	strcpy(szPath, file_path);
 	strcat(szPath, "\\gpaccfgtest.txt");
-	f = fopen(szPath, "wb");
+	f = gf_fopen(szPath, "wb");
 	/*COMPLETE FAILURE*/
 	if (!f) return GF_FALSE;
 
-	fclose(f);
+	gf_fclose(f);
 	gf_delete_file(szPath);
 	return GF_TRUE;
 #endif
@@ -272,20 +270,7 @@ static Bool get_default_install_path(char *file_path, u32 path_type)
 		} else
 #endif
 			strcpy(file_path, user_home);
-
 		if (file_path[strlen(file_path)-1] == '/') file_path[strlen(file_path)-1] = 0;
-
-		//cleanup of old install in .gpacrc
-		if (check_file_exists(".gpacrc", file_path, file_path)) {
-			strcpy(app_path, file_path);
-			strcat(app_path, "/.gpacrc");
-			gf_delete_file(app_path);
-		}
-
-		strcat(file_path, "/.gpac");
-		if (!gf_dir_exists(file_path)) {
-			gf_mkdir(file_path);
-		}
 		return 1;
 	}
 
@@ -410,10 +395,10 @@ static GF_Config *create_default_config(char *file_path)
 	}
 	/*Create the config file*/
 	sprintf(szPath, "%s%c%s", file_path, GF_PATH_SEPARATOR, CFG_FILE_NAME);
-	GF_LOG(GF_LOG_INFO, GF_LOG_CORE, ("Trying to create config file: %s\n", szPath ));
-	f = fopen(szPath, "wt");
+	fprintf(stderr, "Trying to create config file: %s", szPath);
+	f = gf_fopen(szPath, "wt");
 	if (!f) return NULL;
-	fclose(f);
+	gf_fclose(f);
 
 #ifndef GPAC_IPHONE
 	if (! get_default_install_path(szPath, GF_PATH_MODULES)) {
@@ -423,6 +408,7 @@ static GF_Config *create_default_config(char *file_path)
 	}
 #else
 	get_default_install_path(szPath, GF_PATH_APP);
+	strcpy(szPath, "");
 #endif
 
 	cfg = gf_cfg_new(file_path, CFG_FILE_NAME);
@@ -430,45 +416,21 @@ static GF_Config *create_default_config(char *file_path)
 
 	gf_cfg_set_key(cfg, "General", "ModulesDirectory", szPath);
 
-    /*get default temporary directoy */
-    cache_dir = gf_get_default_cache_directory();
-    
-    //get real path where the .gpac dir has been created, and use this as the default path
-    //for cache (tmp/ dir of ios app) and last working fir
 #ifdef GPAC_IPHONE
     char buf[GF_MAX_PATH], *res;
     res = realpath(file_path, buf);
     if (res) {
-        char *sep = strstr(res, ".gpac");
-        assert(sep);
-        sep[0] = 0;
         gf_cfg_set_key(cfg, "General", "LastWorkingDir", res);
         gf_cfg_set_key(cfg, "General", "iOSDocumentsDir", res);
-
-        sep = strstr(res, "Documents");
-        assert(sep);
-        sep[0]=0;
-        strcat(res, "tmp/");
-        cache_dir = res;
-        if (!gf_dir_exists(cache_dir)) gf_mkdir(cache_dir);
-        gf_cfg_set_key(cfg, "General", "CacheDirectory", cache_dir);
-        cache_dir=NULL;
     }
 #endif
 
+    /*get default temporary directoy */
+	cache_dir = gf_get_default_cache_directory();
 	if (cache_dir) {
 		gf_cfg_set_key(cfg, "General", "CacheDirectory", cache_dir);
 		gf_free(cache_dir);
 	}
-    
-#if defined(GPAC_IPHONE)
-    gf_cfg_set_key(cfg, "General", "DeviceType", "iOS");
-#elif defined(GPAC_ANDROID)
-    gf_cfg_set_key(cfg, "General", "DeviceType", "Android");
-#else
-    gf_cfg_set_key(cfg, "General", "DeviceType", "Desktop");
-#endif
-    
 	gf_cfg_set_key(cfg, "Compositor", "Raster2D", "GPAC 2D Raster");
 	gf_cfg_set_key(cfg, "Audio", "ForceConfig", "yes");
 	gf_cfg_set_key(cfg, "Audio", "NumBuffers", "2");
@@ -490,7 +452,7 @@ static GF_Config *create_default_config(char *file_path)
 #elif defined(__APPLE__)
 
 #ifdef GPAC_IPHONE
-	strcpy(szPath, "/System/Library/Fonts/Cache,/System/Library/Fonts/AppFonts,/System/Library/Fonts/Core,/System/Library/Fonts/Extra");
+	strcpy(szPath, "/System/Library/Fonts/AppFonts");
 #else
 	strcpy(szPath, "/Library/Fonts");
 #endif
@@ -651,13 +613,6 @@ GF_Config *gf_cfg_init(const char *file, Bool *new_cfg)
 
 	check_modules_dir(cfg);
 
-	if (!gf_cfg_get_key(cfg, "General", "StorageDirectory")) {
-		get_default_install_path(szPath, GF_PATH_CFG);
-		strcat(szPath, "/Storage");
-		if (!gf_dir_exists(szPath)) gf_mkdir(szPath);
-		gf_cfg_set_key(cfg, "General", "StorageDirectory", szPath);
-	}
-    
 	if (new_cfg) *new_cfg = GF_TRUE;
 	return cfg;
 }
