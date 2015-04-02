@@ -84,5 +84,3 @@ extra_lib/include/SDL/
 config.mak
 configure-stamp
 gpac.pc
-
-extra_lib/include
