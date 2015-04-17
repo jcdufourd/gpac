@@ -802,6 +802,7 @@ Bool GPAC_EventProc(void *ptr, GF_Event *evt)
 			eos_seen = GF_FALSE;
 			if (playback_speed != FIX_ONE)
 				gf_term_set_speed(term, playback_speed);
+
 		} else if (is_connected) {
 			fprintf(stderr, "Service %s\n", is_connected ? "Disconnected" : "Connection Failed");
 			is_connected = 0;
@@ -1333,7 +1334,7 @@ int main (int argc, char **argv)
 			} else if (!strcmp(arg, "-show")) {
 				visible = 1;
 			}
-			else if (!strcmp(arg, "-exit")) auto_exit = 1;
+			else if (!strcmp(arg, "-exit")) auto_exit = GF_TRUE;
 			else if (!stricmp(arg, "-views")) {
 				views = argv[i+1];
 				i++;
@@ -1454,7 +1455,7 @@ int main (int argc, char **argv)
 
 	if (bench_mode) {
 		gf_cfg_discard_changes(user.config);
-		auto_exit = 1;
+		auto_exit = GF_TRUE;
 		gf_cfg_set_key(user.config, "Audio", "DriverName", "Raw Audio Output");
 		if (bench_mode!=2) {
 			gf_cfg_set_key(user.config, "Video", "DriverName", "Raw Video Output");
@@ -1632,14 +1633,14 @@ int main (int argc, char **argv)
 				gf_sleep(rti_update_time_ms);
 			}
 			if (auto_exit && eos_seen && gf_term_get_option(term, GF_OPT_IS_OVER)) {
-				Run = 0;
+				Run = GF_FALSE;
 			}
 
 			/*sim time*/
 			if (simulation_time_in_ms
 			        && ( (gf_term_get_time_in_ms(term)>simulation_time_in_ms) || (!url_arg && gf_sys_clock()>simulation_time_in_ms))
 			   ) {
-				Run = 0;
+				Run = GF_FALSE;
 			}
 			continue;
 		}
@@ -1826,8 +1827,8 @@ force_input:
 					ViewOD(term, ID, (u32)-1, NULL);
 				} else {
 					char str_url[GF_MAX_PATH];
-					scanf("%s", str_url);
-					ViewOD(term, 0, (u32)-1, str_url);
+					if (scanf("%s", str_url) == 1)
+						ViewOD(term, 0, (u32)-1, str_url);
 				}
 			}
 			break;

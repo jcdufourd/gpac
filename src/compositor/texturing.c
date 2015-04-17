@@ -172,7 +172,7 @@ static void setup_texture_object(GF_TextureHandler *txh, Bool private_media)
 				break;
 			}
 		}
-		gf_mo_set_flag(txh->stream, GF_MO_IS_INIT, 1);
+		gf_mo_set_flag(txh->stream, GF_MO_IS_INIT, GF_TRUE);
 	}
 }
 
@@ -226,7 +226,7 @@ void gf_sc_texture_update_frame(GF_TextureHandler *txh, Bool disable_resync)
 
 	/*if no frame or muted don't draw*/
 	if (!txh->data || !size) {
-		GF_LOG(GF_LOG_INFO, GF_LOG_CODEC, ("|Visual Texture] No output frame available \n"));
+		GF_LOG(GF_LOG_INFO, GF_LOG_CODEC, ("[Visual Texture] No output frame available \n"));
 		/*TODO - check if this is needed */
 		if (txh->flags & GF_SR_TEXTURE_PRIVATE_MEDIA) {
 			//txh->needs_refresh = 1;

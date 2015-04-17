@@ -75,6 +75,8 @@ typedef struct
 	GF_JSClass odmClass;
 	GF_JSClass anyClass;
 
+	GF_JSClass storageClass;
+
 	jsval evt_fun;
 	GF_TermEventFilter evt_filter;
 	GF_Event *evt;
@@ -85,6 +87,10 @@ typedef struct
 
 	u32 rti_refresh_rate;
 	GF_SystemRTInfo rti;
+
+	//list of config files for storage
+	GF_List *storages;
+
 } GF_GPACJSExt;
 
 
@@ -387,7 +393,7 @@ case -35: //"focus_highlight"
 return JS_TRUE;
 }
 
-static JSBool SMJS_FUNCTION(gpac_getOption)
+static JSBool SMJS_FUNCTION(gpac_get_option)
 {
 	const char *opt = NULL;
 	char *sec_name, *key_name;
@@ -440,7 +446,7 @@ static JSBool SMJS_FUNCTION(gpac_getOption)
 	return JS_TRUE;
 }
 
-static JSBool SMJS_FUNCTION(gpac_setOption)
+static JSBool SMJS_FUNCTION(gpac_set_option)
 {
 	char *sec_name, *key_name, *key_val;
 	SMJS_OBJ
@@ -935,17 +941,29 @@ static SMJS_FUNC_PROP_GET( odm_getProperty)
 			*vp = INT_TO_JSVAL(com.quality_query.index);
 			break;
 		}
-
-	#if 0
-		//otherwise use input channels
+#if 0
+		//use input channels
 		if (odm->codec->type==GF_STREAM_VISUAL) {
-			*vp = INT_TO_JSVAL(gf_list_count(odm->codec->inChannels));
-		} else {
-			*vp = INT_TO_JSVAL(0);
-		}
-	#endif
+			u32 count = gf_list_count(odm->codec->inChannels);
+			if (count>1) {
+				*vp = INT_TO_JSVAL(count);
+				break;
+			}
+		} 
+		//use number of scalable addons
+		if (odm->upper_layer_odm) {
+			u32 count = 0;
+			while (odm) {
+				odm = odm->upper_layer_odm;
+				count++;
+			}
+			*vp = INT_TO_JSVAL(count);
+			break;
+		} 
+#endif
+		*vp = INT_TO_JSVAL(1);
+		break;
 	}
-	break;
 	case -29:
 		*vp = INT_TO_JSVAL(odi.max_buffer);
 		break;
@@ -984,16 +1002,17 @@ static SMJS_FUNC_PROP_GET( odm_getProperty)
 		*vp = INT_TO_JSVAL(gf_list_count(odm->net_service->dnloads) );
 		break;
 	case -39:
-		if ((s32) odm->timeshift_depth >= 0) {
+		if ((s32) odm->timeshift_depth > 0) {
 			*vp = DOUBLE_TO_JSVAL( JS_NewDouble(c, ((Double) odm->timeshift_depth) / 1000.0 ) );
 		} else {
-			*vp = DOUBLE_TO_JSVAL( JS_NewDouble(c, -1) );
+			*vp = DOUBLE_TO_JSVAL( JS_NewDouble(c, 0.0) );
 		}
 		break;
 	case -40:
 	{
 		GF_NetworkCommand com;
 		GF_Scene *scene;
+		Double res = 0.0;
 
 		if (!odm->timeshift_depth) {
 			*vp = INT_TO_JSVAL(0);
@@ -1016,10 +1035,23 @@ static SMJS_FUNC_PROP_GET( odm_getProperty)
 			}
 		}
 
-		//can be NULL
-		com.base.on_channel = gf_list_get(odm->channels, 0);
-		gf_term_service_command(odm->net_service, &com);
-		*vp = INT_TO_JSVAL(com.timeshift.time);
+		if (odm->timeshift_depth) {
+			//can be NULL
+			com.base.on_channel = gf_list_get(odm->channels, 0);
+			gf_term_service_command(odm->net_service, &com);
+			res = com.timeshift.time;
+		} else if (scene->main_addon_selected) {
+			GF_Clock *ck;
+			ck = scene->dyn_ck;
+			if (scene->scene_codec) ck = scene->scene_codec->ck;
+			if (ck) {
+				u32 now = gf_clock_time(scene->dyn_ck) ;
+				u32 live = scene->obj_clock_at_main_activation + gf_sys_clock() - scene->sys_clock_at_main_activation;
+				res = ((Double) live) / 1000.0;
+				res -= ((Double) now) / 1000.0;
+			}
+		}
+		*vp = DOUBLE_TO_JSVAL( JS_NewDouble(c, res) );
 	}
 	break;
 	case -41:
@@ -1109,6 +1141,9 @@ static SMJS_FUNC_PROP_GET( odm_getProperty)
 		e = gf_term_service_command(odm->net_service, &com);
 		*vp = BOOLEAN_TO_JSVAL((e==GF_OK) ? GF_TRUE : GF_FALSE );
 	}
+		break;
+	case -50:
+		*vp = BOOLEAN_TO_JSVAL(odm && (odm->lower_layer_odm || odm->scalable_addon) ? JS_TRUE : JS_FALSE);
 		break;
 	}
 
@@ -1347,6 +1382,70 @@ static JSBool SMJS_FUNCTION(gpac_get_object_manager)
 }
 
 
+static JSBool SMJS_FUNCTION(gpac_new_storage)
+{
+	char szFile[GF_MAX_PATH];
+	JSObject *anobj;
+	GF_Config *storage = NULL;
+	char *storage_url = NULL;
+    u8 hash[20];
+    char temp[3];
+	SMJS_OBJ
+	SMJS_ARGS
+	GF_GPACJSExt *gjs = (GF_GPACJSExt *)SMJS_GET_PRIVATE(c, obj);
+
+	if (JSVAL_IS_STRING(argv[0]) ) {
+		u32 i, count;
+		storage_url = SMJS_CHARS(c, argv[0]);
+		if (!storage_url) {
+			SMJS_SET_RVAL(JSVAL_NULL);
+			return JS_TRUE;
+		}
+
+		szFile[0]=0;
+		gf_sha1_csum((u8 *)storage_url, (u32) strlen(storage_url), hash);
+		for (i=0; i<20; i++) {
+			sprintf(temp, "%02X", hash[i]);
+			strcat(szFile, temp);
+		}
+		strcat(szFile, ".cfg");
+
+		count = gf_list_count(gjs->storages);
+		for (i=0; i<count; i++) {
+			GF_Config *a_cfg = gf_list_get(gjs->storages, i);
+			const char *cfg_name = gf_cfg_get_filename(a_cfg);
+
+			if (!strstr(cfg_name, szFile)) {
+				storage = a_cfg;
+				break;
+			}
+		}
+
+		if (!storage) {
+			const char *storage_dir = gf_cfg_get_key(gjs->term->user->config, "General", "StorageDirectory");
+
+			storage = gf_cfg_force_new(storage_dir, szFile);
+			if (storage) {
+				gf_cfg_set_key(storage, "GPAC", "StorageURL", storage_url);
+				gf_list_add(gjs->storages, storage);
+			}
+		}
+
+		SMJS_FREE(c, storage_url);
+	}
+
+	if (!storage) {
+		SMJS_SET_RVAL(JSVAL_NULL);
+		return JS_TRUE;
+	}
+	anobj = JS_NewObject(c, &gjs->storageClass._class, 0, 0);
+	SMJS_SET_PRIVATE(c, anobj, storage);
+
+
+	SMJS_SET_RVAL( OBJECT_TO_JSVAL(anobj) );
+	return JS_TRUE;
+}
+
 static SMJS_FUNC_PROP_GET( gpacevt_getProperty)
 
 GF_GPACJSExt *gjs = SMJS_GET_PRIVATE(c, obj);
@@ -1413,12 +1512,25 @@ return JS_TRUE;
 
 static Bool gjs_event_filter(void *udta, GF_Event *evt, Bool consumed_by_compositor)
 {
+	u32 retry;
 	Bool res;
 	jsval argv[1], rval;
 	GF_GPACJSExt *gjs = (GF_GPACJSExt *)udta;
 	if (consumed_by_compositor) return 0;
 
 	if (gjs->evt != NULL) return 0;
+
+	/*fixme - events should all be handled by the compositor */
+	res = 0;
+	retry=100;
+	while (retry && gjs->nb_loaded) {
+		res = gf_mx_try_lock(gjs->term->compositor->mx);
+		if (res) break;
+		retry --;
+		gf_sleep(0);
+	}
+	if (!res) return 0;
+
 	res = 0;
 	while (gjs->nb_loaded) {
 		res = gf_sg_try_lock_javascript(gjs->c);
@@ -1430,14 +1542,15 @@ static Bool gjs_event_filter(void *udta, GF_Event *evt, Bool consumed_by_composi
 	gjs->evt = evt;
 	SMJS_SET_PRIVATE(gjs->c, gjs->evt_obj, gjs);
 	argv[0] = OBJECT_TO_JSVAL(gjs->evt_obj);
-	rval = JSVAL_VOID;
+	rval = BOOLEAN_TO_JSVAL(JS_TRUE);
 	JS_CallFunctionValue(gjs->c, gjs->evt_filter_obj, gjs->evt_fun, 1, argv, &rval);
 	SMJS_SET_PRIVATE(gjs->c, gjs->evt_obj, NULL);
 	gjs->evt = NULL;
+	gf_mx_v(gjs->term->compositor->mx);
 
 	res = 0;
 	if (JSVAL_IS_BOOLEAN(rval) ) {
-		res = (JSVAL_TO_BOOLEAN(rval)==JS_TRUE) ? 1 : 0;
+		res = (JSVAL_TO_BOOLEAN(rval)==JS_TRUE) ? GF_TRUE : GF_FALSE;
 	} else if (JSVAL_IS_INT(rval) ) {
 		res = (JSVAL_TO_INT(rval)) ? 1 : 0;
 	}
@@ -1501,8 +1614,11 @@ static JSBool SMJS_FUNCTION(gpac_get_scene)
 	GF_Node *elt;
 	u32 w, h;
 	JSObject *scene_obj;
+#ifndef GPAC_DISABLE_SCENEGRAPH
 	GF_SceneGraph *sg;
+#endif
 	GF_Scene *scene=NULL;
+
 	SMJS_OBJ
 	SMJS_ARGS
 	GF_GPACJSExt *gjs = (GF_GPACJSExt *)SMJS_GET_PRIVATE(c, obj);
@@ -1511,12 +1627,18 @@ static JSBool SMJS_FUNCTION(gpac_get_scene)
 	elt = gf_sg_js_get_node(c, JSVAL_TO_OBJECT(argv[0]));
 	if (!elt) return JS_TRUE;
 	switch (elt->sgprivate->tag) {
+#ifndef GPAC_DISABLE_VRML
 	case TAG_MPEG4_Inline:
-#ifndef GPAC_DISABLE_X3D
-	case TAG_X3D_Inline:
-#endif
 		scene = (GF_Scene *)gf_node_get_private(elt);
 		break;
+#endif
+
+#ifndef GPAC_DISABLE_X3D
+	case TAG_X3D_Inline:
+		scene = (GF_Scene *)gf_node_get_private(elt);
+		break;
+#endif
+
 #ifndef GPAC_DISABLE_SVG
 	case TAG_SVG_animation:
 		sg = gf_sc_animation_get_scenegraph(elt);
@@ -1553,6 +1675,91 @@ static JSBool SMJS_FUNCTION(gpac_show_keyboard)
 		evt.type = show ? GF_EVENT_TEXT_EDITING_START : GF_EVENT_TEXT_EDITING_END;
 		gf_term_user_event(term, &evt);
 	}
+	return JS_TRUE;
+}
+
+
+static JSBool SMJS_FUNCTION(gjs_storage_get_option)
+{
+	const char *opt = NULL;
+	char *sec_name, *key_name;
+	s32 idx = -1;
+	JSString *s;
+	SMJS_OBJ
+	SMJS_ARGS
+	GF_Config *config = (GF_Config *)SMJS_GET_PRIVATE(c, obj);
+	if (!config) return JS_FALSE;
+
+	if (argc < 2) return JS_FALSE;
+
+	if (!JSVAL_IS_STRING(argv[0])) return JS_FALSE;
+	if (!JSVAL_IS_STRING(argv[1]) && !JSVAL_IS_INT(argv[1])) return JS_FALSE;
+
+	sec_name = SMJS_CHARS(c, argv[0]);
+	key_name = NULL;
+	if (JSVAL_IS_INT(argv[1])) {
+		idx = JSVAL_TO_INT(argv[1]);
+	} else if (JSVAL_IS_STRING(argv[1]) ) {
+		key_name = SMJS_CHARS(c, argv[1]);
+	}
+
+	if (key_name) {
+		opt = gf_cfg_get_key(config, sec_name, key_name);
+	} else if (idx>=0) {
+		opt = gf_cfg_get_key_name(config, sec_name, idx);
+    } else {
+        opt = NULL;
+    }
+	if (key_name) {
+		SMJS_FREE(c, key_name);
+	}
+	SMJS_FREE(c, sec_name);
+
+	if (opt) {
+		s = JS_NewStringCopyZ(c, opt);
+		SMJS_SET_RVAL( STRING_TO_JSVAL(s) );
+	} else {
+		SMJS_SET_RVAL( JSVAL_NULL );
+	}
+	return JS_TRUE;
+}
+
+static JSBool SMJS_FUNCTION(gjs_storage_set_option)
+{
+	char *sec_name, *key_name, *key_val;
+	SMJS_OBJ
+	SMJS_ARGS
+	GF_Config *config = (GF_Config *)SMJS_GET_PRIVATE(c, obj);
+	if (!config) return JS_FALSE;
+
+	if (argc < 3) return JS_FALSE;
+
+	if (!JSVAL_IS_STRING(argv[0])) return JS_FALSE;
+	if (!JSVAL_IS_STRING(argv[1])) return JS_FALSE;
+
+	sec_name = SMJS_CHARS(c, argv[0]);
+	key_name = SMJS_CHARS(c, argv[1]);
+	key_val = NULL;
+	if (JSVAL_IS_STRING(argv[2]))
+		key_val = SMJS_CHARS(c, argv[2]);
+
+	gf_cfg_set_key(config, sec_name, key_name, key_val);
+
+	SMJS_FREE(c, sec_name);
+	SMJS_FREE(c, key_name);
+	if (key_val) {
+		SMJS_FREE(c, key_val);
+	}
+	return JS_TRUE;
+}
+
+static JSBool SMJS_FUNCTION(gjs_storage_save)
+{
+	SMJS_OBJ
+	GF_Config *config = (GF_Config *)SMJS_GET_PRIVATE(c, obj);
+	if (!config) return JS_FALSE;
+
+	gf_cfg_save(config);
 	return JS_TRUE;
 }
 
@@ -1620,10 +1827,8 @@ static void gjs_load(GF_JSUserExtension *jsext, GF_SceneGraph *scene, JSContext 
 		SMJS_PROPERTY_SPEC(0, 0, 0, 0, 0)
 	};
 	JSFunctionSpec gpacClassFuncs[] = {
-		SMJS_FUNCTION_SPEC("getOption",		gpac_getOption, 3),
-		SMJS_FUNCTION_SPEC("setOption",		gpac_setOption, 4),
-		SMJS_FUNCTION_SPEC("get_option",		gpac_getOption, 3),
-		SMJS_FUNCTION_SPEC("set_option",		gpac_setOption, 4),
+		SMJS_FUNCTION_SPEC("get_option",		gpac_get_option, 3),
+		SMJS_FUNCTION_SPEC("set_option",		gpac_set_option, 4),
 		SMJS_FUNCTION_SPEC("get_arg",		gpac_get_arg, 1),
 		SMJS_FUNCTION_SPEC("enum_directory",	gpac_enum_directory, 1),
 		SMJS_FUNCTION_SPEC("set_size",		gpac_set_size, 1),
@@ -1639,7 +1844,7 @@ static void gjs_load(GF_JSUserExtension *jsext, GF_SceneGraph *scene, JSContext 
 		SMJS_FUNCTION_SPEC("show_keyboard",		gpac_show_keyboard, 1),
 		SMJS_FUNCTION_SPEC("trigger_gc",		gpac_trigger_gc, 1),
 		SMJS_FUNCTION_SPEC("get_object_manager",		gpac_get_object_manager, 1),
-
+		SMJS_FUNCTION_SPEC("new_storage",		gpac_new_storage, 1),
 
 		SMJS_FUNCTION_SPEC(0, 0, 0)
 	};
@@ -1694,6 +1899,7 @@ static void gjs_load(GF_JSUserExtension *jsext, GF_SceneGraph *scene, JSContext 
 		SMJS_PROPERTY_SPEC("ntp_diff",			-47,       JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_SHARED | JSPROP_READONLY, 0, 0),
 		SMJS_PROPERTY_SPEC("main_addon_url",	-48,       JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_SHARED | JSPROP_READONLY, 0, 0),
 		SMJS_PROPERTY_SPEC("reverse_playback_supported",		-49,       JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_SHARED | JSPROP_READONLY, 0, 0),
+		SMJS_PROPERTY_SPEC("scalable_enhancement",		-50,       JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_SHARED | JSPROP_READONLY, 0, 0),
 		
 
 
@@ -1712,6 +1918,18 @@ static void gjs_load(GF_JSUserExtension *jsext, GF_SceneGraph *scene, JSContext 
 
 		SMJS_FUNCTION_SPEC(0, 0, 0)
 	};
+
+
+	JSPropertySpec storageClassProps[] = {
+		SMJS_PROPERTY_SPEC(0, 0, 0, 0, 0)
+	};
+	JSFunctionSpec storageClassFuncs[] = {
+		SMJS_FUNCTION_SPEC("get_option",		gjs_storage_get_option, 2),
+		SMJS_FUNCTION_SPEC("set_option",		gjs_storage_set_option, 3),
+		SMJS_FUNCTION_SPEC("save",				gjs_storage_save, 0),
+		SMJS_FUNCTION_SPEC(0, 0, 0)
+	};
+
 
 	gjs = jsext->udta;
 	/*nothing to do on unload*/
@@ -1744,6 +1962,10 @@ static void gjs_load(GF_JSUserExtension *jsext, GF_SceneGraph *scene, JSContext 
 
 		JS_SETUP_CLASS(gjs->odmClass, "ODM", JSCLASS_HAS_PRIVATE, odm_getProperty, JS_PropertyStub_forSetter, JS_FinalizeStub);
 		GF_JS_InitClass(c, global, 0, &gjs->odmClass, 0, 0, odmClassProps, odmClassFuncs, 0, 0);
+
+
+		JS_SETUP_CLASS(gjs->storageClass, "Storage", JSCLASS_HAS_PRIVATE, JS_PropertyStub, JS_PropertyStub_forSetter, JS_FinalizeStub);
+		GF_JS_InitClass(c, global, 0, &gjs->storageClass, 0, 0, storageClassProps, storageClassFuncs, 0, 0);
 	} else {
 		JS_DefineProperty(c, global, "gpac", OBJECT_TO_JSVAL(gjs->gpac_obj), 0, 0, JSPROP_READONLY | JSPROP_PERMANENT);
 	}
@@ -1815,6 +2037,7 @@ GF_JSUserExtension *gjs_new()
 	GF_SAFEALLOC(gjs, GF_GPACJSExt);
 	gjs->rti_refresh_rate = GPAC_JS_RTI_REFRESH_RATE;
 	gjs->evt_fun = JSVAL_NULL;
+	gjs->storages = gf_list_new();
 	dr->load = gjs_load;
 	dr->udta = gjs;
 	return dr;
@@ -1825,6 +2048,14 @@ void gjs_delete(GF_BaseInterface *ifce)
 {
 	GF_JSUserExtension *dr = (GF_JSUserExtension *) ifce;
 	GF_GPACJSExt *gjs = dr->udta;
+
+	while (gf_list_count(gjs->storages)) {
+		GF_Config *cfg = (GF_Config *) gf_list_pop_back(gjs->storages);
+		gf_cfg_discard_changes(cfg);
+		gf_cfg_del(cfg);
+	}
+	gf_list_del(gjs->storages);
+
 	gf_free(gjs);
 	gf_free(dr);
 }

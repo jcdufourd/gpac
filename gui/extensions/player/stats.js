@@ -1,4 +1,11 @@
 
+extension.reload_stats = function () {
+    if (this.stat_wnd) {
+        this.stat_wnd.reload_request = true;
+        this.stat_wnd.close();
+    }
+}
+
 extension.view_stats = function () {
     if (this.stat_wnd) {
         this.stat_wnd.close();
@@ -10,6 +17,7 @@ extension.view_stats = function () {
     gw_object_set_dragable(wnd);
     this.stat_wnd = wnd;
     wnd.extension = this;
+    wnd.reload_request = false;
 
     wnd.area = gw_new_grid_container(wnd);
     wnd.area.break_at_hidden = true;
@@ -51,9 +59,10 @@ extension.view_stats = function () {
         m.gui = {};
 
         var label = '' + m.type;
-        label += ' ID ' + m.ID;
+
         if (m.width) label += ' (' + m.width + 'x' + m.height + ')';
         else if (m.samplerate) label += ' (' + m.samplerate + ' Hz ' + m.channels + ' channels)';
+        else if (m.scalable_enhancement) label += ' (Enhancement Layer)';
 
         m.gui.txt = gw_new_text(wnd.area, label, 'lefttext');
 
@@ -311,6 +320,7 @@ extension.view_stats = function () {
     wnd.http_control = null;
     if (nb_http) {
         wnd.http_text = gw_new_text(wnd.area, 'HTTP rate', 'lefttext');
+
         wnd.http_control = gw_new_slider(wnd.area);
 
         if (gpac.http_max_bitrate) {
@@ -330,7 +340,7 @@ extension.view_stats = function () {
             wnd.http_text.set_label('HTTP cap ' + Math.round(100 * gpac.http_max_bitrate / 1024 / 1024) / 100 + ' Mbps');
 
         } else {
-            wnd.http_control.set_value(0);
+            wnd.http_control.set_value(100);
             wnd.http_text.set_label('HTTP cap off');
         }
 
@@ -346,12 +356,16 @@ extension.view_stats = function () {
             } else {
                 br = 50 + 150 * (val - 80) / 20;
             }
-            if (br) {
-                this.text.set_label('HTTP cap ' + Math.round(100 * br) / 100 + ' Mbps');
-            } else {
+            if (br == 200) {
                 this.text.set_label('HTTP cap off');
+                gpac.http_max_bitrate = Math.round(0);
+            } else if (br == 0) {
+                this.text.set_label('HTTP disable');
+                gpac.http_max_bitrate = -1;
+            } else {
+                this.text.set_label('HTTP cap ' + Math.round(100 * br) / 100 + ' Mbps');
+                gpac.http_max_bitrate = Math.round(br * 1024 * 1024);
             }
-            gpac.http_max_bitrate = Math.round(br * 1024 * 1024);
         }
 
         gw_new_separator(wnd.area);
@@ -376,7 +390,7 @@ extension.view_stats = function () {
             aw -= this.objs[i].gui.info.width;
 
             if (this.objs[i].gui.buffer) {
-                this.objs[i].gui.buffer.set_size(3 * gwskin.default_icon_height, 0.75 * gwskin.default_icon_height);
+                this.objs[i].gui.buffer.set_size(2 * gwskin.default_icon_height, 0.75 * gwskin.default_icon_height);
             }
             if (this.objs[i].gui.play) {
                 this.objs[i].gui.play.set_size(gwskin.default_icon_height, gwskin.default_icon_height);
@@ -413,7 +427,14 @@ extension.view_stats = function () {
     wnd.on_close = function () {
         this.timer.stop();
         this.objs = [];
-        this.extension.stat_wnd = null;
+        if (this.reload_request) {
+            var translation = this.extension.stat_wnd.translation;
+            this.extension.stat_wnd = null;
+            this.extension.view_stats();
+            this.extension.stat_wnd.translation = translation;
+        } else {
+            this.extension.stat_wnd = null;
+        }
     }
 
     wnd.timer = gw_new_timer(false);
@@ -455,7 +476,7 @@ extension.view_stats = function () {
     wnd.timer.on_event = function (val) {
         var wnd = this.wnd;
         var nb_buff = 0;
-       
+
         var stat_obj = null;
         //stats every second
         if (!(val % 4)) {
@@ -482,12 +503,22 @@ extension.view_stats = function () {
 
         for (var i = 0; i < wnd.objs.length; i++) {
             var m = wnd.objs[i];
-            
+
             if (m.gui.buffer) {
                 var label = ' ' + m.type;
-                label += ' ID ' + m.ID;
+
                 if (m.width) label += ' (' + m.width + 'x' + m.height + ')';
-                else if (m.samplerate) label += ' (' + m.samplerate + ' Hz ' + m.channels + ' channels)';
+                else if (m.samplerate) label += ' (' + Math.round(m.samplerate/10)/100 + ' kHz ' + m.channels + ' ch)';
+                else if (m.scalable_enhancement) label += ' (Enh. Layer)';
+
+                var url = m.service_url;
+                if ((url.indexOf('udp://') >= 0) || (url.indexOf('rtp://') >= 0) || (url.indexOf('dvb://') >= 0))
+                    label += ' Broadcast';
+                else if ((url.indexOf('file://') >= 0) || (url.indexOf('://') < 0))
+                    label += ' File';
+                else
+                    label += ' Broadband';
+
                 m.gui.txt.set_label(label);
 
                 var bl;
@@ -499,9 +530,9 @@ extension.view_stats = function () {
                     bl = 100 * buf / m.max_buffer;
 
                     if (stat_obj) {
-//                        if (stat_obj.buffer < buf) {
-//                            stat_obj.buffer = buf;
-//                        }
+                        //                        if (stat_obj.buffer < buf) {
+                        //                            stat_obj.buffer = buf;
+                        //                        }
 
                         stat_obj.buffer += buf;
                         nb_buff++;
@@ -513,9 +544,9 @@ extension.view_stats = function () {
                 m.gui.buffer.set_label('' + Math.round(m.buffer / 10) / 100 + ' s');
 
                 if (stat_obj) {
-                  bl = m.ntp_diff;
-                  if (bl > stat_obj.ntp_diff) 
-                    stat_obj.ntp_diff = bl;
+                    bl = m.ntp_diff;
+                    if (bl > stat_obj.ntp_diff)
+                        stat_obj.ntp_diff = bl;
                 }
             }
 
@@ -544,7 +575,7 @@ extension.view_stats = function () {
             if (wnd.s_ntp) {
                 wnd.s_ntp.refresh_serie(this.wnd.stats, 'time', 'ntp_diff', wnd.stats_window, 3);
             }
-            
+
             wnd.s_cpu.refresh_serie(wnd.stats, 'time', 'cpu', wnd.stats_window, 10);
             wnd.s_mem.refresh_serie(wnd.stats, 'time', 'memory', wnd.stats_window, 6);
         }

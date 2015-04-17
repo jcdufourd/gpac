@@ -386,7 +386,7 @@ gwskin.no_gl_window_back.backColor = new SFColor(0, 0, 0);
 //static
 function gw_get_abs_pos(child) {
     var pos = new SFVec2f(0, 0);
-    while (1) {
+    while (child != null) {
         if (typeof (child.translation) != 'undefined') {
             pos.x += child.translation.x;
             pos.y += child.translation.y;
@@ -846,7 +846,7 @@ function gwlib_filter_event(evt) {
         return false;
 
     for (var i = 0; i < gw_event_filters.length; i++) {
-        if (gw_event_filters[i](evt)) return true;
+        if (gw_event_filters[i](evt) == true) return true;
     }
     return false;
 }
@@ -897,7 +897,7 @@ function gwlib_init(root_node) {
     gpac.set_event_filter(gwlib_filter_event);
     gwskin.has_opengl = (gpac.get_option('Compositor', 'OpenGLMode') != 'disable') ? true : false;
 
-    gwskin.browser_mode = (gpac.getOption('Temp', 'BrowserMode') == 'yes') ? true : false;
+    gwskin.browser_mode = (gpac.get_option('Temp', 'BrowserMode') == 'yes') ? true : false;
 
     gpac.focus_highlight = false;
 
@@ -2987,10 +2987,10 @@ function gw_guess_mime_icon(name)
 
     var idx = 0;
     while (1) {
-        var mime = gpac.getOption('MimeTypes', idx);
+        var mime = gpac.get_option('MimeTypes', idx);
         if (mime == null) break;
         idx++;
-        var mime_ext = gpac.getOption('MimeTypes', mime).split('"')[1];
+        var mime_ext = gpac.get_option('MimeTypes', mime).split('"')[1];
         if (!mime_ext.match(reg)) continue;
                 
         if (mime.indexOf('video') != -1) return gwskin.images.mime_video;
@@ -3266,7 +3266,7 @@ function gw_new_plotter(parent) {
         this.height = height;
     }
 
-    obj.label_width = 100;
+    obj.label_width = 120;
 
     obj.series = [];
     obj.add_serie = function (legend, units, r, g, b) {

@@ -49,12 +49,12 @@ typedef struct __mpd_module
 	GF_DASHFileIO dash_io;
 
 	Bool connection_ack_sent;
-	Bool in_seek;
 	Bool memory_storage;
 	Bool use_max_res, immediate_switch, allow_http_abort;
 	u32 use_low_latency;
 	MpdInBuffer buffer_mode;
-	Double previous_start_range;
+	u32 nb_playing;
+
 	/*max width & height in all active representations*/
 	u32 width, height;
 
@@ -75,10 +75,11 @@ typedef struct
 	Bool has_new_data;
 	u32 idx;
 	GF_DownloadSession *sess;
-	Bool in_seek, is_timestamp_based, pto_setup;
+	Bool is_timestamp_based, pto_setup;
 	u32 timescale;
 	s64 pto;
 	s64 max_cts_in_period;
+	bin128 key_IV;
 } GF_MPDGroup;
 
 const char * MPD_MPD_DESC = "MPEG-DASH Streaming";
@@ -163,6 +164,22 @@ void mpdin_data_packet(GF_ClientService *service, LPNETCHANNEL ns, char *data, u
 	}
 
 	group = gf_dash_get_group_udta(mpdin->dash, i);
+
+	if (gf_dash_is_m3u8(mpdin->dash)) {
+		mpdin->fn_data_packet(service, ns, data, data_size, hdr, reception_status);
+		if (!group->pto_setup) {
+			GF_NetworkCommand com;
+			memset(&com, 0, sizeof(com));
+			com.command_type = GF_NET_CHAN_SET_MEDIA_TIME;
+			com.map_time.media_time = mpdin->media_start_range;
+			com.map_time.timestamp = hdr->compositionTimeStamp;
+			com.base.on_channel =  ns;
+			gf_service_command(service, &com, GF_OK);
+			group->pto_setup = GF_TRUE;
+		}
+		return;
+	}
+
 	//if sync is based on timestamps do not adjust the timestamps back
 	if (! group->is_timestamp_based) {
 		if (!group->pto_setup) {
@@ -179,6 +196,7 @@ void mpdin_data_packet(GF_ClientService *service, LPNETCHANNEL ns, char *data, u
 			}
 			scale = ch->esd->slConfig->timestampResolution;
 			scale /= 1000;
+
 			dur = (u64) (scale * gf_dash_get_period_duration(mpdin->dash));
 			if (dur) {
 				group->max_cts_in_period = group->pto + dur;
@@ -189,6 +207,7 @@ void mpdin_data_packet(GF_ClientService *service, LPNETCHANNEL ns, char *data, u
 			start = (u64) (scale * gf_dash_get_period_start(mpdin->dash));
 			group->pto -= start;
 		}
+
 		//filter any packet outside the current period
 		if (group->max_cts_in_period && (s64) hdr->compositionTimeStamp > group->max_cts_in_period) {
 			GF_LOG(GF_LOG_WARNING, GF_LOG_DASH, ("[DASH] Packet timestamp "LLU" larger than max CTS in period "LLU" - skipping\n", hdr->compositionTimeStamp, group->max_cts_in_period));
@@ -262,8 +281,6 @@ static GF_Err MPD_ClientQuery(GF_InputService *ifce, GF_NetworkCommand *param)
 	GF_MPD_In *mpdin = (GF_MPD_In *) ifce->proxy_udta;
 	if (!param || !ifce || !ifce->proxy_udta) return GF_BAD_PARAM;
 
-	mpdin->in_seek = 0;
-
 	/*gets byte range of init segment (for local validation)*/
 	if (param->command_type==GF_NET_SERVICE_QUERY_INIT_RANGE) {
 		param->url_query.next_url = NULL;
@@ -277,6 +294,11 @@ static GF_Err MPD_ClientQuery(GF_InputService *ifce, GF_NetworkCommand *param)
 			if (group->segment_ifce == ifce) {
 				gf_dash_group_get_segment_init_url(mpdin->dash, i, &param->url_query.start_range, &param->url_query.end_range);
 				param->url_query.current_download = 0;
+
+				param->url_query.key_url = gf_dash_group_get_segment_init_keys(mpdin->dash, i, &group->key_IV);
+				if (param->url_query.key_url) {
+					param->url_query.key_IV = &group->key_IV;
+				}
 				return GF_OK;
 			}
 		}
@@ -311,12 +333,6 @@ static GF_Err MPD_ClientQuery(GF_InputService *ifce, GF_NetworkCommand *param)
 
 		if (!group) {
 			return GF_SERVICE_ERROR;
-		}
-
-		if (group->in_seek) {
-			group->in_seek = 0;
-			param->url_query.discontinuity_type = 2;
-			discard_first_cache_entry = 0;
 		}
 
 		//update group idx
@@ -386,9 +402,11 @@ static GF_Err MPD_ClientQuery(GF_InputService *ifce, GF_NetworkCommand *param)
 
 		e = gf_dash_group_get_next_segment_location(mpdin->dash, group_idx, param->url_query.dependent_representation_index, &param->url_query.next_url, &param->url_query.start_range, &param->url_query.end_range,
 		        NULL, &param->url_query.next_url_init_or_switch_segment, &param->url_query.switch_start_range , &param->url_query.switch_end_range,
-		        &src_url, &param->url_query.has_next);
+				&src_url, &param->url_query.has_next, &param->url_query.key_url, &group->key_IV);
 		if (e)
 			return e;
+
+		param->url_query.key_IV = &group->key_IV;
 
 		if (gf_dash_group_loop_detected(mpdin->dash, group_idx))
 			param->url_query.discontinuity_type = 2;
@@ -959,8 +977,7 @@ GF_Err MPD_ConnectService(GF_InputService *plug, GF_ClientService *serv, const c
 	if (!opt) gf_modules_set_option((GF_BaseInterface *)plug, "DASH", "UseServerUTC", "yes");
 	use_server_utc = (opt && !strcmp(opt, "yes")) ? 1 : 0;
 
-	mpdin->in_seek = 0;
-	mpdin->previous_start_range = 0;
+	mpdin->nb_playing = 0;
 
 	init_timeshift = 0;
 	opt = gf_modules_get_option((GF_BaseInterface *)plug, "DASH", "InitialTimeshift");
@@ -1260,6 +1277,9 @@ GF_Err MPD_ServiceCommand(GF_InputService *plug, GF_NetworkCommand *com)
 			group->is_timestamp_based = 0;
 			group->pto_setup = 0;
 			if (com->play.start_range<0) com->play.start_range = 0;
+			//in m3u8, we need also media start time for mapping time
+			if (gf_dash_is_m3u8(mpdin->dash))
+				mpdin->media_start_range = com->play.start_range;
 		}
 
 		//we cannot handle seek request outside of a period being setup, this messes up our internal service setup
@@ -1279,42 +1299,23 @@ GF_Err MPD_ServiceCommand(GF_InputService *plug, GF_NetworkCommand *com)
 		gf_dash_set_speed(mpdin->dash, com->play.speed);
 
 		/*don't seek if this command is the first PLAY request of objects declared by the subservice, unless start range is not default one (0) */
-		if (! mpdin->in_seek && (!com->play.initial_broadcast_play || (com->play.start_range>1.0) ) ) {
-			Bool skip_seek;
+		if (!mpdin->nb_playing && (!com->play.initial_broadcast_play || (com->play.start_range>1.0) )) {
 			GF_LOG(GF_LOG_DEBUG, GF_LOG_DASH, ("[MPD_IN] Received Play command from terminal on channel %p on Service (%p)\n", com->base.on_channel, mpdin->service));
 
-			mpdin->in_seek = GF_TRUE;
-
-			/*if start range request is the same as previous one, don't process it
-			- this happens at period switch when new objects are declared*/
-			skip_seek = GF_FALSE;
-			if (com->play.initial_broadcast_play && (mpdin->previous_start_range==com->play.start_range))
-				skip_seek = GF_TRUE;
-			if (gf_dash_is_m3u8(mpdin->dash) == GF_TRUE)
-				skip_seek = GF_TRUE;
-
-			mpdin->previous_start_range = com->play.start_range;
-
-			if (!skip_seek) {
-				if (com->play.end_range<=0) {
-					u32 ms = (u32) ( 1000 * (-com->play.end_range) );
-					if (ms<1000) ms = 0;
-					gf_dash_set_timeshift(mpdin->dash, ms);
-				}
-				gf_dash_seek(mpdin->dash, com->play.start_range);
-
-				//we have issued a seek request, mark the group as seeking
-				if (mpdin->in_seek) {
-					//group->in_seek = 1;
-				}
-				//and check if current segment playback should be aborted
-				com->play.dash_segment_switch = gf_dash_group_segment_switch_forced(mpdin->dash, idx);
+			if (com->play.end_range<=0) {
+				u32 ms = (u32) ( 1000 * (-com->play.end_range) );
+				if (ms<1000) ms = 0;
+				gf_dash_set_timeshift(mpdin->dash, ms);
 			}
+			gf_dash_seek(mpdin->dash, com->play.start_range);
 
 			//to remove once we manage to keep the service alive
 			/*don't forward commands if a switch of period is to be scheduled, we are killing the service anyway ...*/
 			if (gf_dash_get_period_switch_status(mpdin->dash)) return GF_OK;
 		}
+
+		//check if current segment playback should be aborted
+		com->play.dash_segment_switch = gf_dash_group_segment_switch_forced(mpdin->dash, idx);
 
 		gf_dash_group_select(mpdin->dash, idx, GF_TRUE);
 		gf_dash_set_group_done(mpdin->dash, (u32) idx, 0);
@@ -1328,6 +1329,7 @@ GF_Err MPD_ServiceCommand(GF_InputService *plug, GF_NetworkCommand *com)
 			com->play.start_range += ((Double)pto) / timescale;
 		}
 
+		mpdin->nb_playing++;
 		return segment_ifce->ServiceCommand(segment_ifce, com);
 
 	case GF_NET_CHAN_STOP:
@@ -1336,7 +1338,8 @@ GF_Err MPD_ServiceCommand(GF_InputService *plug, GF_NetworkCommand *com)
 		if (idx>=0) {
 			gf_dash_set_group_done(mpdin->dash, (u32) idx, 1);
 		}
-		mpdin->previous_start_range = -1;
+		if (mpdin->nb_playing)
+			mpdin->nb_playing--;
 	}
 	return segment_ifce->ServiceCommand(segment_ifce, com);
 

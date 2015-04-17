@@ -59,23 +59,23 @@ extension = {
         switch (evt.type) {
             case GF_EVENT_MOUSEUP:
                 this.do_show_controler();
-                return 1;
+                return true;
             case GF_EVENT_KEYUP:
                 if (evt.keycode == gwskin.keys.close) {
                     this.do_show_controler();
-                    return 1;
+                    return true;
                 }
-                return 0;
+                return false;
             case GF_EVENT_QUALITY_SWITCHED:
                 if (this.stat_wnd) {
                     this.stat_wnd.quality_changed();
                 }
-                return 1;
+                return true;
             case GF_EVENT_TIMESHIFT_UPDATE:
                 if (this.timeshift_depth) {
                     this.set_time(0);
                 }
-                return 1;
+                return true;
             case GF_EVENT_TIMESHIFT_OVERFLOW:
                 if (this.state == this.GF_STATE_PAUSE) {
                     this.set_state(this.GF_STATE_PLAY);
@@ -83,7 +83,7 @@ extension = {
                     msg.set_size(380, gwskin.default_icon_height + 2 * gwskin.default_text_font_size);
                     msg.show();
                 }
-                return 1;
+                return true;
             case GF_EVENT_TIMESHIFT_UNDERRUN:
                 if (this.movie_control.mediaSpeed > 1) {
                     this.set_speed(1);
@@ -91,10 +91,10 @@ extension = {
                     msg.set_size(380, gwskin.default_icon_height + 2 * gwskin.default_text_font_size);
                     msg.show();
                 }
-                return 1;
+                return true;
             case GF_EVENT_NAVIGATE:
                 this.set_movie_url(evt.target_url);
-                return 1;
+                return true;
         }
     },
 
@@ -300,15 +300,7 @@ extension = {
             }
         }
         this.movie.children[0].on_main_addon = function (evt) {
-            alert('main addon state change');
-            if (this.extension.stat_wnd) {
-                //close stats
-                this.extension.stat_wnd.close();
-                this.extension.stat_wnd = null;
-                //open stats
-                this.extension.view_stats();
-            }
-
+            this.extension.reload_stats();
             this.extension.controler.layout();
         }
 
@@ -349,12 +341,12 @@ extension = {
         Browser.addRoute(this.movie_sensor, 'mediaCurrentTime', this, this.on_movie_time);
         Browser.addRoute(this.movie_sensor, 'isActive', this, this.on_movie_active);
 
-        var hist = gpac.get_option('GUI', 'PlaybackHistory');
+        var hist = this.get_option('PlaybackHistory');
         if ((hist != null) && (hist != '')) {
             this.history = gwskin.parse(hist);
         }
 
-        var bmarks = gpac.get_option('GUI', 'Bookmarks');
+        var bmarks = this.get_option('Bookmarks');
         if ((bmarks != null) && (bmarks != '')) {
             this.bookmarks = gwskin.parse(bmarks);
         }
@@ -405,18 +397,18 @@ extension = {
             }
             gw_background_control(false);
             switch (type) {
-                //start sliding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                //start sliding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 case 1:
                     this.extension.set_state(this.extension.GF_STATE_PAUSE);
                     this.extension.set_speed(0);
                     break;
-                //done sliding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                //done sliding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 case 2:
                     this.extension.set_state(this.extension.GF_STATE_PLAY);
                     this.extension.movie_control.mediaStartTime = time;
                     this.extension.set_speed(1);
                     break;
-                //init slide, go in play mode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                //init slide, go in play mode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 default:
                     if (this.extension.state == this.extension.GF_STATE_STOP)
                         this.extension.set_state(this.extension.GF_STATE_PLAY);
@@ -697,13 +689,13 @@ extension = {
                     this.play.show();
                 } else {
                     full_w += control_icon_size;
-                    this.play.show();
+                    //this.play.show();
                     if (this.extension.state == this.extension.GF_STATE_STOP) {
                         this.stop.hide();
                         this.play.show();
                     } else {
-                        //                        this.play.hide();
-                        //                        this.stop.show();
+                        this.play.hide();
+                        this.stop.show();
                     }
                 }
 
@@ -969,7 +961,7 @@ extension = {
 
     create_event_filter: function (__anobj) {
         return function (evt) {
-            __anobj.ext_filter_event(evt);
+            return __anobj.ext_filter_event(evt);
         }
     },
 
