@@ -2624,7 +2624,7 @@
 				);
 				INFOPLIST_FILE = "../../applications/osmo4_ios/osmo4ios-Info.plist";
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../extra_lib/lib/iOS\"",
@@ -2635,8 +2635,8 @@
 				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = osmo4ios;
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2663,7 +2663,7 @@
 				);
 				INFOPLIST_FILE = "../../applications/osmo4_ios/osmo4ios-Info.plist";
 				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../extra_lib/lib/iOS\"",
@@ -2674,8 +2674,8 @@
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = osmo4ios;
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				ZERO_LINK = NO;
@@ -2710,7 +2710,7 @@
 					../../extra_lib/include/freetype,
 					../../extra_lib/include,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = ../../extra_lib/lib/iOS;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2718,7 +2718,7 @@
 					"-D__IPHONEOS__",
 				);
 				PRODUCT_NAME = libgpac_static;
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
@@ -2750,7 +2750,7 @@
 					../../extra_lib/include/freetype,
 					../../extra_lib/include,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = ../../extra_lib/lib/iOS;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
@@ -2759,7 +2759,7 @@
 					"-D__IPHONEOS__",
 				);
 				PRODUCT_NAME = libgpac_static;
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 				ZERO_LINK = NO;
@@ -2787,10 +2787,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2817,11 +2817,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../include;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "1532b130-b21e-4cd8-8394-2eb029e5382a";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1532b130-b21e-4cd8-8394-2eb029e5382a";
+				PROVISIONING_PROFILE = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7a9fbd13-9b4c-4698-9e93-6464fb725179";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
