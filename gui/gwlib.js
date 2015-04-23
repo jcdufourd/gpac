@@ -7,20 +7,14 @@
 
 /*log function*/
 function gwlog(lev, str) {
-    if (lev <= gw_log_level) {
-        if (str.charAt(0) != '[') {
-            alert('[GUI] ' + str);
-        } else {
-            alert(str);
-        }
-    }
+    alert(lev, str);
 }
 
 /*log levels*/
-l_err = 0;
-l_war = 1;
-l_inf = 2;
-l_deb = 3;
+l_err = 1;
+l_war = 2;
+l_inf = 3;
+l_deb = 4;
 
 /*default log level*/
 gw_log_level = l_inf;
@@ -442,9 +436,9 @@ gwskin.tooltip_exec = function (obj, show) {
     
     if (!gwskin.tooltip_wnd) {
         wnd = gw_new_window(null, true, true, 'tooltip', true);
+        wnd.label = '';
         gwskin.tooltip_wnd = wnd;
         wnd.txt = gw_new_text(gwskin.tooltip_wnd, '');
-        wnd.label = '';
         wnd.on_display_size = function (w, h) {
             width = this.label.length * gwskin.default_text_font_size;
             this.set_size(width, 2 * gwskin.default_text_font_size);
@@ -920,7 +914,8 @@ function gwlib_init(root_node) {
     }
 
     var device = gpac.get_option('General', 'DeviceType');
-    if ((device=='iOS') || (device=='Android')) gwskin.mobile_device = true;
+
+    if ((device == 'iOS') || (device == 'Android')) gwskin.mobile_device = true;
     else gwskin.mobile_device = false;
     
     if (gwskin.mobile_device) {
@@ -1254,6 +1249,7 @@ function gw_new_rectangle(class_name, style) {
         this.corner_bl = bl;
         this.corner_br = br;
     }
+    obj.sfv = new SFVec2f(0, 0);
 
     obj.set_size = function (w, h) {
         var hw, hh, rx_bl, ry_bl, rx_br, ry_br, rx_tl, ry_tl, rx_tr, ry_tr, rx, ry;
@@ -1283,19 +1279,50 @@ function gw_new_rectangle(class_name, style) {
         if (!this.corner_bl) rx_bl = ry_bl = 0;
         if (!this.corner_br) rx_br = ry_br = 0;
 
+        if (shape.geometry.point.point.length < 12) {
+            shape.geometry.point.point.length = 12;
+            for (var i = 0; i < 12; i++) {
+                shape.geometry.point.point[i].x = 0;
+            }
+        }
         temp = this.children[0].geometry.point.point;
-        temp[0] = new SFVec2f(hw - rx_tr, hh);
-        temp[1] = new SFVec2f(hw, hh); /*bezier ctrl point or line-to*/
-        temp[2] = new SFVec2f(hw, hh - ry_tr);
-        temp[3] = new SFVec2f(hw, -hh + ry_br);
-        temp[4] = new SFVec2f(hw, -hh); /*bezier control point*/
-        temp[5] = new SFVec2f(hw - rx_br, -hh);
-        temp[6] = new SFVec2f(-hw + rx_bl, -hh);
-        temp[7] = new SFVec2f(-hw, -hh); /*bezier control point*/
-        temp[8] = new SFVec2f(-hw, -hh + ry_bl);
-        temp[9] = new SFVec2f(-hw, hh - ry_tl);
-        temp[10] = new SFVec2f(-hw, hh); /*bezier control point*/
-        temp[11] = new SFVec2f(-hw + rx_tl, hh);
+
+        this.sfv.x = hw - rx_tr;
+        this.sfv.y = hh;
+        temp[0] = this.sfv;
+        this.sfv.x = hw; 
+        this.sfv.y = hh; /*bezier ctrl point or line-to*/
+        temp[1] = this.sfv;
+        this.sfv.x = hw;
+        this.sfv.y = hh - ry_tr;
+        temp[2] = this.sfv;
+        this.sfv.x = hw; 
+        this.sfv.y = -hh + ry_br;
+        temp[3] = this.sfv;
+        this.sfv.x = hw;
+        this.sfv.y = -hh; /*bezier control point*/
+        temp[4] = this.sfv;
+        this.sfv.x = hw - rx_br;
+        this.sfv.y = -hh;
+        temp[5] = this.sfv;
+        this.sfv.x = -hw + rx_bl;
+        this.sfv.y = -hh;
+        temp[6] = this.sfv;
+        this.sfv.x = -hw;
+        this.sfv.y = -hh; /*bezier control point*/
+        temp[7] = this.sfv;
+        this.sfv.x = -hw;
+        this.sfv.y = -hh + ry_bl;
+        temp[8] = this.sfv;
+        this.sfv.x = -hw;
+        this.sfv.y = hh - ry_tl;
+        temp[9] = this.sfv;
+        this.sfv.x = -hw;
+        this.sfv.y = hh; /*bezier control point*/
+        temp[10] = this.sfv;
+        this.sfv.x = -hw + rx_tl;
+        this.sfv.y = hh;
+        temp[11] = this.sfv;
     }
     return obj;
 }
